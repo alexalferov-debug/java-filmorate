@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class UserService {
         logger.debug("Попытка обновления пользователя с ID: {}", userForUpdate.getId());
         if (users.stream().noneMatch(user1 -> user1.getId() == userForUpdate.getId())) {
             logger.error("Ошибка обновления пользователя: пользователь с ID {} не найден", userForUpdate.getId());
-            throw new ValidationException("User not found with id: " + userForUpdate.getId());
+            throw new NotFoundException("User not found with id: " + userForUpdate.getId());
         }
         setUsernameOnNull(userForUpdate);
         users.replaceAll(user -> userForUpdate.getId() == user.getId() ? userForUpdate : user);

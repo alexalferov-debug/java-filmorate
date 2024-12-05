@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class FilmService {
         logger.debug("Попытка обновления фильма с ID: {}", filmForUpdate.getId());
         if (films.stream().noneMatch(film -> film.getId() == filmForUpdate.getId())) {
             logger.error("Ошибка обновления фильма: фильм с ID {} не найден", filmForUpdate.getId());
-            throw new ValidationException("Film not found with id: " + filmForUpdate.getId());
+            throw new NotFoundException("Film not found with id: " + filmForUpdate.getId());
         }
         films.replaceAll(film -> filmForUpdate.getId() == film.getId() ? filmForUpdate : film);
         logger.info("Фильм с ID {} обновлён", filmForUpdate.getId());
