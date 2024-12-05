@@ -3,19 +3,21 @@ package ru.yandex.practicum.filmorate.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class UserService {
-    private final List <User> users = new ArrayList <> ();
+    private final List<User> users = new ArrayList<>();
     private static final AtomicInteger idGenerator = new AtomicInteger(0);
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService() {}
+    public UserService() {
+    }
 
     public User addUser(User user) {
         logger.debug("Попытка добавления пользователя: {}", user);
