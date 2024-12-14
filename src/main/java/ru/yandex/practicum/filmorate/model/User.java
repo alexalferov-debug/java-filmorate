@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class User {
@@ -18,4 +20,13 @@ public class User {
     private String login;
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
+    private Set<Integer> friends = new HashSet<>();
+
+    public boolean addFriend(int id) {
+        return friends.add(id);
+    }
+
+    public boolean removeFriend(int id) {
+        return friends.remove(id);
+    }
 }

@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -19,7 +21,7 @@ public class Film {
     @NotBlank(message = "Название не может быть пустым")
     private String name;
 
-    @Size(max = 200,message = "Максимальная длина описания — 200 символов")
+    @Size(max = 200, message = "Максимальная длина описания — 200 символов")
     private String description;
 
     @ValidReleaseDate()
@@ -27,4 +29,18 @@ public class Film {
 
     @Positive(message = "продолжительность фильма должна быть положительным числом")
     private int duration;
+
+    Set<Integer> likedUsers = new HashSet<>();
+
+    public boolean addLikedUser(int userId) {
+        return likedUsers.add(userId);
+    }
+
+    public boolean removeLikedUser(int userId) {
+        return likedUsers.remove(userId);
+    }
+
+    public int getLikesCount() {
+        return likedUsers.size();
+    }
 }

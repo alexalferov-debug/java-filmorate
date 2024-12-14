@@ -3,56 +3,73 @@ package ru.yandex.practicum.filmorate.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final List<User> users = new ArrayList<>();
-    private static final AtomicInteger idGenerator = new AtomicInteger(0);
+    private final UserStorage userStorage;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService() {
+    public UserService(UserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
     public User addUser(User user) {
-        logger.debug("Попытка добавления пользователя: {}", user);
-        user.setId(generateId());
-        setUsernameOnNull(user);
-        users.add(user);
-        logger.info("Пользователь добавлен с ID: {}", user.getId());
-        return user;
+        return userStorage.addUser(user);
     }
 
-    public User updateUser(User userForUpdate) {
-        logger.debug("Попытка обновления пользователя с ID: {}", userForUpdate.getId());
-        if (users.stream().noneMatch(user1 -> user1.getId() == userForUpdate.getId())) {
-            logger.error("Ошибка обновления пользователя: пользователь с ID {} не найден", userForUpdate.getId());
-            throw new NotFoundException("User not found with id: " + userForUpdate.getId());
-        }
-        setUsernameOnNull(userForUpdate);
-        users.replaceAll(user -> userForUpdate.getId() == user.getId() ? userForUpdate : user);
-        logger.info("Пользователь с ID {} обновлён", userForUpdate.getId());
-        return userForUpdate;
+    public User updateUser(User user) {
+        return userStorage.updateUser(user);
     }
 
     public List<User> getUsersList() {
-        logger.info("Получение списка пользователей");
-        return users;
+        return userStorage.getUsersList();
     }
 
-    private int generateId() {
-        return idGenerator.incrementAndGet();
+    public User getUser(int id) {
+        return userStorage.findUserById(id);
     }
 
-    private void setUsernameOnNull(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            logger.debug("У пользователя с id " + user.getId() + " не установлено имя, в качестве имени будет присвоен логин: " + user.getLogin());
-            user.setName(user.getLogin());
-        }
+    public void addFriend(int userId, int friendId) {
+        logger.info("Добавление друга {}Для пользователя{}", friendId, userId);
+        User currentUser = userStorage.findUserById(userId);
+        User friend = userStorage.findUserById(friendId);
+        currentUser.addFriend(friendId);
+        friend.addFriend(userId);
     }
+
+    public void removeFriend(int userId, int friendId) {
+        logger.info("Удаление из списка друзей пользователя {} друга {}", userId, friendId);
+        User curUser = userStorage.findUserById(userId);
+        User friend = userStorage.findUserById(friendId);
+        curUser.removeFriend(friendId);
+        friend.removeFriend(userId);
+    }
+
+    public List<User> getFriendsList(int curUserId) {
+        logger.info("Запрошен список друзей пользователя {}", curUserId);
+        User curUser = userStorage.findUserById(curUserId);
+        return userStorage.getUsersList()
+                .stream()
+                .filter(user -> curUser.getFriends().contains(user.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> getFriendsIntersect(int firstUserId, int secondUserId) {
+        logger.info("Попытка получить пересечения друзей между пользователя с id {} и {}", firstUserId, secondUserId);
+        Set<Integer> firstUserFriends = new HashSet<>(userStorage.findUserById(firstUserId).getFriends());
+        Set<Integer> secondUserFriends = new HashSet<>(userStorage.findUserById(secondUserId).getFriends());
+        firstUserFriends.retainAll(secondUserFriends);
+        return userStorage.getUsersList()
+                .stream()
+                .filter(user -> firstUserFriends.contains(user.getId()))
+                .collect(Collectors.toList());
+    }
+
 }
