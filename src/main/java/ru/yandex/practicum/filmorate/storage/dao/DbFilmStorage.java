@@ -160,15 +160,15 @@ public class DbFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getPopularFilms(int filmsCount) {
-        String getPopularFilms = "SELECT f.*," +
-                "r.ID as mpa_id," +
-                "r.NAME as mpa_name," +
-                "count(l.FILM_ID) as likes_count" +
-                " from LIKES l " +
-                "right join PUBLIC.FILM F on F.ID = l.FILM_ID " +
-                "right join PUBLIC.RATING R on f.RATING_ID = R.ID " +
-                "group by f.ID " +
-                "ORDER BY count(l.FILM_ID) DESC " +
+        String getPopularFilms = "SELECT f.*, " +
+                "r.ID AS mpa_id, " +
+                "r.NAME AS mpa_name, " +
+                "COUNT(l.FILM_ID) AS likes_count " +
+                "FROM LIKES l " +
+                "RIGHT JOIN FILM f ON f.ID = l.FILM_ID " +
+                "LEFT JOIN RATING r ON f.RATING_ID = r.ID " +
+                "GROUP BY f.ID, f.NAME, f.RELEASE_DATE, f.DURATION, f.DESCRIPTION, r.ID, r.NAME " + // Добавляем все поля
+                "ORDER BY likes_count DESC " +
                 "LIMIT ?";
         return jdbc.query(getPopularFilms, filmMapper, filmsCount);
     }
