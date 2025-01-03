@@ -64,10 +64,10 @@ public class DbFilmStorage implements FilmStorage {
                     preparedStatement.setString(2, film.getDescription());
                     preparedStatement.setDate(3, Date.valueOf(film.getReleaseDate()));
                     preparedStatement.setInt(4, film.getDuration());
-                    if (Objects.nonNull(film.getMpa())){
+                    if (Objects.nonNull(film.getMpa())) {
                         preparedStatement.setInt(5, film.getMpa().getId());
                     } else {
-                        preparedStatement.setNull(5,java.sql.Types.INTEGER);
+                        preparedStatement.setNull(5, java.sql.Types.INTEGER);
                     }
                     return preparedStatement;
                 }, keyHolder
