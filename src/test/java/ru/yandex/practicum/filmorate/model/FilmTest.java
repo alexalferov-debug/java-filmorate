@@ -22,7 +22,7 @@ public class FilmTest {
     @Test
     public void shouldInvalidFilmWhenNameIsNull() {
         Film film = new Film();
-        film.setName(null); // Не устанавливаем имя
+        film.setName(null);
         film.setDescription("A valid description");
         film.setReleaseDate(LocalDate.of(2020, 1, 1));
         film.setDuration(120);
@@ -36,7 +36,7 @@ public class FilmTest {
     public void shouldInvalidFilmWhenDescriptionIsTooLong() {
         Film film = new Film();
         film.setName("Title");
-        film.setDescription("A".repeat(201)); // 201 символ
+        film.setDescription("A".repeat(201));
         film.setReleaseDate(LocalDate.of(2020, 1, 1));
         film.setDuration(120);
 
@@ -50,7 +50,7 @@ public class FilmTest {
         Film film = new Film();
         film.setName("Title");
         film.setDescription("Some description");
-        film.setReleaseDate(LocalDate.of(1894, 12, 27)); // Неправильная дата
+        film.setReleaseDate(LocalDate.of(1894, 12, 27));
         film.setDuration(120);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -64,7 +64,7 @@ public class FilmTest {
         film.setName("Title");
         film.setDescription("Some description");
         film.setReleaseDate(LocalDate.of(2020, 1, 1));
-        film.setDuration(-1); // Неправильная продолжительность
+        film.setDuration(-1);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(1, violations.size());
@@ -77,10 +77,10 @@ public class FilmTest {
         film.setName("Title");
         film.setDescription("Some description");
         film.setReleaseDate(LocalDate.of(2024, 1, 1));
-        film.setDuration(120); // Корректная информация
+        film.setDuration(120);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertEquals(0, violations.size()); // Должно быть без нарушений
+        assertEquals(0, violations.size());
     }
 }
 
