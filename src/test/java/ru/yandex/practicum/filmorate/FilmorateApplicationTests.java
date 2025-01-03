@@ -131,16 +131,6 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    @Description("Проверим, что выбрасывается исключение при удалении из друзей пользователя, в друзья не добавленного")
-    public void testThrowExceptionOnDropFromFriendsNotAddedUser() {
-        User addedUser = userStorage.addUser(GenerateRandomizeInstances.generateRandomUser());
-        User anotherUser = userStorage.addUser(GenerateRandomizeInstances.generateRandomUser());
-        assertThatThrownBy(() -> userStorage.removeFriend(addedUser.getId(), anotherUser.getId()))
-                .isInstanceOf(DatabaseValidationException.class)
-                .hasMessageContaining("Пользователь с id " + anotherUser.getId() + " отсутствует в списке друзей");
-    }
-
-    @Test
     @Description("Добавляем корректный фильм")
     public void addFilm() {
         Film film = GenerateRandomizeInstances.generateRandomFilm();

@@ -96,9 +96,6 @@ public class DbUserStorage implements UserStorage {
         }
         User friend = findUserById(friendId);
         User user = findUserById(userId);
-        if (!getFriendsList(userId).contains(friend)) {
-            throw new DatabaseValidationException("Пользователь с id " + friendId + " отсутствует в списке друзей");
-        }
         String removeFriendFromUser = "delete from FRIENDS_LINK where USER_ID = ? and FRIEND_ID = ?";
         jdbc.update(removeFriendFromUser, user.getId(), friend.getId());
     }
