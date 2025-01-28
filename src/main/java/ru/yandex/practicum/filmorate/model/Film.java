@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import java.util.Set;
  * Film.
  */
 @Data
+@EqualsAndHashCode
 public class Film {
     private int id;
 
@@ -27,6 +29,10 @@ public class Film {
 
     @ValidReleaseDate()
     private LocalDate releaseDate;
+
+    private Set<Genre> genres;
+
+    private Mpa mpa;
 
     @Positive(message = "продолжительность фильма должна быть положительным числом")
     private int duration;

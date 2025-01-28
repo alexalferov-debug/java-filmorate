@@ -36,23 +36,16 @@ public class FilmService {
 
     public void addLike(int filmId, int userId) {
         userService.getUser(userId);
-        Film film = filmStorage.getFilm(filmId);
-        film.addLikedUser(userId);
+        filmStorage.addLike(filmId, userId);
     }
 
     public void removeLike(int filmId, int userId) {
         userService.getUser(userId);
-        Film film = filmStorage.getFilm(filmId);
-        film.removeLikedUser(userId);
+        filmStorage.removeLike(filmId, userId);
     }
 
     public List<Film> getMostLikedFilms(int filmsCount) {
-        return filmStorage
-                .getFilmsList()
-                .stream()
-                .sorted((film, film1) -> Integer.compare(film1.getLikesCount(), film.getLikesCount()))
-                .limit(filmsCount)
-                .toList();
+       return filmStorage.getPopularFilms(filmsCount);
     }
 
 

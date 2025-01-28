@@ -22,7 +22,7 @@ public class UserTest {
     @Test
     public void shouldInvalidUserWhenEmailIsNull() {
         User user = new User();
-        user.setEmail(null); // Не устанавливаем email
+        user.setEmail(null);
         user.setLogin("testUser");
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
@@ -34,7 +34,7 @@ public class UserTest {
     @Test
     public void shouldInvalidUserWhenEmailIsInvalid() {
         User user = new User();
-        user.setEmail("invalidEmail"); // Неправильный email
+        user.setEmail("invalidEmail");
         user.setLogin("testUser");
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
@@ -47,7 +47,7 @@ public class UserTest {
     public void shouldInvalidUserWhenLoginIsNull() {
         User user = new User();
         user.setEmail("test@test.com");
-        user.setLogin(null); // Не устанавливаем логин
+        user.setLogin(null);
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -59,7 +59,7 @@ public class UserTest {
     public void shouldInvalidUserWhenLoginContainsSpace() {
         User user = new User();
         user.setEmail("test@test.com");
-        user.setLogin("test user"); // Неправильный логин
+        user.setLogin("test user");
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -72,7 +72,7 @@ public class UserTest {
         User user = new User();
         user.setEmail("test@test.com");
         user.setLogin("testUser");
-        user.setBirthday(LocalDate.now().plusDays(1)); // Будущая дата
+        user.setBirthday(LocalDate.now().plusDays(1));
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertEquals(1, violations.size());
@@ -87,6 +87,6 @@ public class UserTest {
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertEquals(0, violations.size()); // Должно быть без нарушений
+        assertEquals(0, violations.size());
     }
 }

@@ -1,10 +1,11 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.ram;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,27 @@ public class InMemoryFilmStorage implements FilmStorage {
                     logger.error("Фильм не найден с ID: {}", id);
                     return new NotFoundException("Film not found with id: " + id);
                 });
+    }
+
+    @Override
+    public void addLike(int filmId, int userId) {
+        Film film = getFilm(filmId);
+        film.addLikedUser(userId);
+    }
+
+    @Override
+    public void removeLike(int filmId, int userId) {
+        Film film = getFilm(filmId);
+        film.removeLikedUser(userId);
+    }
+
+    @Override
+    public List<Film> getPopularFilms(int filmsCount) {
+        return getFilmsList()
+                .stream()
+                .sorted((film, film1) -> Integer.compare(film1.getLikesCount(), film.getLikesCount()))
+                .limit(filmsCount)
+                .toList();
     }
 
     private int generateId() {

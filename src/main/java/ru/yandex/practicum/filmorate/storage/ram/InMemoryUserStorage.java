@@ -1,14 +1,18 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.ram;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -55,6 +59,46 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getUsersList() {
         logger.info("Получение списка пользователей");
         return users;
+    }
+
+    @Override
+    public void addFriend(int userId, int friendId) {
+        logger.info("Добавление друга {}Для пользователя{}", friendId, userId);
+        User currentUser = findUserById(userId);
+        User friend = findUserById(friendId);
+        currentUser.addFriend(friendId);
+        friend.addFriend(userId);
+    }
+
+    @Override
+    public void removeFriend(int userId, int friendId) {
+        logger.info("Удаление из списка друзей пользователя {} друга {}", userId, friendId);
+        User curUser = findUserById(userId);
+        User friend = findUserById(friendId);
+        curUser.removeFriend(friendId);
+        friend.removeFriend(userId);
+    }
+
+    @Override
+    public List<User> getFriendsList(int curUserId) {
+        logger.info("Запрошен список друзей пользователя {}", curUserId);
+        User curUser = findUserById(curUserId);
+        return getUsersList()
+                .stream()
+                .filter(user -> curUser.getFriends().contains(user.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> getFriendsIntersect(int firstUserId, int secondUserId) {
+        logger.info("Попытка получить пересечения друзей между пользователя с id {} и {}", firstUserId, secondUserId);
+        Set<Integer> firstUserFriends = new HashSet<>(findUserById(firstUserId).getFriends());
+        Set<Integer> secondUserFriends = new HashSet<>(findUserById(secondUserId).getFriends());
+        firstUserFriends.retainAll(secondUserFriends);
+        return getUsersList()
+                .stream()
+                .filter(user -> firstUserFriends.contains(user.getId()))
+                .collect(Collectors.toList());
     }
 
     private int generateId() {
